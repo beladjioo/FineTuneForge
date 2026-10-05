@@ -28,7 +28,7 @@ export default async function NewDatasetPage() {
         title="Importer un dataset"
         description="Vos données restent privées : elles servent uniquement à entraîner vos modèles."
       />
-      <div className="grid items-start gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <DatasetUploader maxBytes={plan.limits.maxDatasetBytes} planName={plan.name} />
         <FormatGuide />
       </div>

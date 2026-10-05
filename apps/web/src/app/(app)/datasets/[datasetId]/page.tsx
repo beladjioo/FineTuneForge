@@ -92,7 +92,7 @@ export default async function DatasetPage(props: PageProps<"/datasets/[datasetId
         </Alert>
       ) : null}
 
-      <div className="grid items-start gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-6">
           {dataset.report ? (
             <Card>
