@@ -38,6 +38,20 @@ const envSchema = z
     GOOGLE_CLIENT_SECRET: optionalString,
 
     HF_ENDPOINT: z.url().default("https://huggingface.co"),
+    /** Optional managed namespace: adapters can be pushed to our own HF org. */
+    HF_PLATFORM_TOKEN: optionalString,
+    HF_PLATFORM_ORG: optionalString,
+
+    TRAINING_PROVIDER: z.enum(["simulated", "local", "modal"]).default("simulated"),
+    ALLOW_SIMULATED_TRAINING: booleanString,
+    /** Base URL of the trainer API (local FastAPI server or Modal web endpoint). */
+    TRAINER_URL: z.url().optional(),
+    /** web → trainer authentication (Bearer). */
+    TRAINER_API_SECRET: optionalString,
+    /** trainer → web callback signatures (HMAC). */
+    TRAINER_CALLBACK_SECRET: optionalString,
+    /** Public base URL the trainer calls back (defaults to APP_URL; use a tunnel for Modal in dev). */
+    TRAINER_CALLBACK_BASE_URL: z.url().optional(),
 
     STORAGE_DRIVER: z.enum(["local", "s3"]).default("local"),
     STORAGE_LOCAL_DIR: z.string().default(".data/storage"),
@@ -49,15 +63,39 @@ const envSchema = z
     S3_FORCE_PATH_STYLE: booleanString,
   })
   .superRefine((env, ctx) => {
-    if (env.STORAGE_DRIVER !== "s3") return;
-    for (const key of ["S3_BUCKET", "S3_ACCESS_KEY_ID", "S3_SECRET_ACCESS_KEY"] as const) {
+    const requireKey = (key: keyof typeof env, reason: string) => {
       if (!env[key]) {
+        ctx.addIssue({ code: "custom", path: [key], message: `${key} is required ${reason}` });
+      }
+    };
+
+    if (env.STORAGE_DRIVER === "s3") {
+      for (const key of ["S3_BUCKET", "S3_ACCESS_KEY_ID", "S3_SECRET_ACCESS_KEY"] as const) {
+        requireKey(key, "when STORAGE_DRIVER=s3");
+      }
+    }
+
+    if (env.TRAINING_PROVIDER === "simulated") {
+      if (env.NODE_ENV === "production" && !env.ALLOW_SIMULATED_TRAINING) {
         ctx.addIssue({
           code: "custom",
-          path: [key],
-          message: `${key} is required when STORAGE_DRIVER=s3`,
+          path: ["TRAINING_PROVIDER"],
+          message:
+            "simulated training is disabled in production (set ALLOW_SIMULATED_TRAINING=true for demos)",
         });
       }
+    } else {
+      for (const key of ["TRAINER_URL", "TRAINER_API_SECRET", "TRAINER_CALLBACK_SECRET"] as const) {
+        requireKey(key, `when TRAINING_PROVIDER=${env.TRAINING_PROVIDER}`);
+      }
+    }
+
+    if (Boolean(env.HF_PLATFORM_TOKEN) !== Boolean(env.HF_PLATFORM_ORG)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["HF_PLATFORM_ORG"],
+        message: "HF_PLATFORM_TOKEN and HF_PLATFORM_ORG must be set together",
+      });
     }
   });
 

@@ -2,6 +2,7 @@ import "server-only";
 import { count, eq, gte, type SQL, sql } from "drizzle-orm";
 import { listDatasets } from "@/features/datasets/server/queries";
 import { getHuggingFaceConnection } from "@/features/huggingface/server/credentials";
+import { startOfCurrentMonthUtc } from "@/lib/dates";
 import { db } from "@/server/db";
 import { datasets, deployedModels, fineTuneJobs } from "@/server/db/schema";
 
@@ -11,11 +12,6 @@ import { datasets, deployedModels, fineTuneJobs } from "@/server/db/schema";
  */
 const countWhere = (condition: SQL | undefined) =>
   sql<number>`count(*) filter (where ${condition})`.mapWith(Number);
-
-function startOfCurrentMonthUtc(): Date {
-  const now = new Date();
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-}
 
 /** Everything the dashboard needs, fetched in parallel. */
 export async function getDashboardData(userId: string) {

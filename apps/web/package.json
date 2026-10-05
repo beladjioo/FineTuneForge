@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "inngest:dev": "inngest-cli dev --no-discovery -u http://localhost:3000/api/inngest"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1146.0",
@@ -22,6 +23,7 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.3",
     "geist": "^1.7.2",
+    "inngest": "^4.21.1",
     "lucide-react": "^1.52.0",
     "next": "16.3.8",
     "papaparse": "^5.7.0",
@@ -35,6 +37,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@inngest/test": "^1.0.0",
     "@next/env": "^16.3.8",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
@@ -42,6 +45,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.11",
+    "inngest-cli": "^1.45.1",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.4.0",
     "typescript": "^5",

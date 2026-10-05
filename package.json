@@ -1,7 +1,7 @@
 {
   "name": "finetuneforge",
   "private": true,
-  "description": "FineTuneForge — fine-tuning LoRA de petits LLM open-source, sans expertise ML.",
+  "description": "FineTuneForge \u2014 fine-tuning LoRA de petits LLM open-source, sans expertise ML.",
   "packageManager": "pnpm@10.28.0",
   "engines": {
     "node": ">=22"
@@ -19,7 +19,8 @@
     "db:down": "docker compose down",
     "db:generate": "pnpm --filter @ftf/web db:generate",
     "db:migrate": "pnpm --filter @ftf/web db:migrate",
-    "db:studio": "pnpm --filter @ftf/web db:studio"
+    "db:studio": "pnpm --filter @ftf/web db:studio",
+    "inngest:dev": "pnpm --filter @ftf/web inngest:dev"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2"

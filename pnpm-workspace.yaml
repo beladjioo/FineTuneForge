@@ -3,6 +3,7 @@ packages:
 
 onlyBuiltDependencies:
   - esbuild
+  - inngest-cli
 
 ignoredBuiltDependencies:
   - sharp

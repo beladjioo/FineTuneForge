@@ -23,3 +23,6 @@ if (env.NODE_ENV !== "production") globalForDb.pgClient = client;
 
 export const db = drizzle(client, { schema });
 export type Database = typeof db;
+
+/** The database or an open transaction: lets data helpers join a caller's transaction. */
+export type Executor = Database | Parameters<Parameters<Database["transaction"]>[0]>[0];
