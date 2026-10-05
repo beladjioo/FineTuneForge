@@ -1,0 +1,27 @@
+{
+  "name": "finetuneforge",
+  "private": true,
+  "description": "FineTuneForge — fine-tuning LoRA de petits LLM open-source, sans expertise ML.",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @ftf/web dev",
+    "build": "pnpm --filter @ftf/web build",
+    "start": "pnpm --filter @ftf/web start",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:generate": "pnpm --filter @ftf/web db:generate",
+    "db:migrate": "pnpm --filter @ftf/web db:migrate",
+    "db:studio": "pnpm --filter @ftf/web db:studio"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.2"
+  }
+}

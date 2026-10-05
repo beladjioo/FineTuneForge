@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# env — only the .example files are committed
+.env
+.env.*
+!.env.example
+
+# local data (local storage driver, local postgres, etc.)
+.data/
+
+# python (services/trainer)
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.pytest_cache/
+
+# testing / tooling
+coverage/
+.vercel/
+.turbo/
+
+# os / editors
+.DS_Store
+*.pem
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

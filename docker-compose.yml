@@ -1,0 +1,48 @@
+# Local infrastructure for development.
+#   pnpm db:up                         → Postgres only (enough with STORAGE_DRIVER=local)
+#   docker compose --profile s3 up -d  → + MinIO, to test the S3 storage driver locally
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ftf
+      POSTGRES_PASSWORD: ftf
+      POSTGRES_DB: finetuneforge
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ftf -d finetuneforge"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    profiles: ["s3"]
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ftf-minio
+      MINIO_ROOT_PASSWORD: ftf-minio-secret
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # Web console
+    volumes:
+      - minio-data:/data
+
+  minio-init:
+    image: minio/mc:latest
+    profiles: ["s3"]
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 ftf-minio ftf-minio-secret; do sleep 1; done;
+      mc mb --ignore-existing local/finetuneforge;
+      "
+
+volumes:
+  postgres-data:
+  minio-data:
