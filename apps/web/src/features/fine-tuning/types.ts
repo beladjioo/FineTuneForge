@@ -18,8 +18,11 @@ export type FineTuneJobStatus = (typeof FINE_TUNE_JOB_STATUSES)[number];
 export const TRAINING_PRESETS = ["beginner", "intermediate", "advanced", "custom"] as const;
 export type TrainingPreset = (typeof TRAINING_PRESETS)[number];
 
-/** Where the GPU work runs. `local` is for development on a workstation. */
-export const TRAINING_PROVIDERS = ["modal", "runpod", "local"] as const;
+/**
+ * Where the GPU work runs: `modal` (production), `local` (the Python trainer on a
+ * workstation) or `simulated` (no GPU, no Python: fake progress for UI development).
+ */
+export const TRAINING_PROVIDERS = ["modal", "runpod", "local", "simulated"] as const;
 export type TrainingProvider = (typeof TRAINING_PROVIDERS)[number];
 
 export interface LoraHyperparameters {
@@ -51,6 +54,10 @@ export interface JobEvaluation {
   baselinePerplexity?: number;
   samples: Array<{ prompt: string; baseOutput?: string; fineTunedOutput: string }>;
 }
+
+/** Whose Hugging Face namespace receives the trained adapter. */
+export const OUTPUT_DESTINATIONS = ["user", "platform"] as const;
+export type OutputDestination = (typeof OUTPUT_DESTINATIONS)[number];
 
 export const JOB_EVENT_TYPES = ["log", "metric", "status"] as const;
 export type JobEventType = (typeof JOB_EVENT_TYPES)[number];

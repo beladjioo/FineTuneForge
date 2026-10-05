@@ -13,6 +13,7 @@ import {
 import {
   FINE_TUNE_JOB_STATUSES,
   JOB_EVENT_TYPES,
+  OUTPUT_DESTINATIONS,
   TRAINING_PRESETS,
   TRAINING_PROVIDERS,
 } from "../../../features/fine-tuning/types";
@@ -30,6 +31,7 @@ export const fineTuneJobStatusEnum = pgEnum("fine_tune_job_status", FINE_TUNE_JO
 export const trainingPresetEnum = pgEnum("training_preset", TRAINING_PRESETS);
 export const trainingProviderEnum = pgEnum("training_provider", TRAINING_PROVIDERS);
 export const jobEventTypeEnum = pgEnum("job_event_type", JOB_EVENT_TYPES);
+export const outputDestinationEnum = pgEnum("output_destination", OUTPUT_DESTINATIONS);
 
 export const deploymentTypeEnum = pgEnum("deployment_type", DEPLOYMENT_TYPES);
 export const deploymentStatusEnum = pgEnum("deployment_status", DEPLOYMENT_STATUSES);

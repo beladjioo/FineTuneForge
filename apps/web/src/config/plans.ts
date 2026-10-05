@@ -11,6 +11,8 @@ const MB = 1024 * 1024;
 export interface PlanLimits {
   /** `null` means unlimited. */
   fineTunesPerMonth: number | null;
+  /** Fine-tunes allowed to run at the same time. */
+  maxConcurrentJobs: number;
   privateDeployments: boolean;
   maxDatasets: number;
   maxDatasetBytes: number;
@@ -32,6 +34,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     tagline: "Pour découvrir le fine-tuning",
     limits: {
       fineTunesPerMonth: 1,
+      maxConcurrentJobs: 1,
       privateDeployments: false,
       maxDatasets: 10,
       maxDatasetBytes: 10 * MB,
@@ -44,6 +47,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     tagline: "Fine-tunes illimités et déploiements privés",
     limits: {
       fineTunesPerMonth: null,
+      maxConcurrentJobs: 3,
       privateDeployments: true,
       maxDatasets: 200,
       maxDatasetBytes: 50 * MB,

@@ -8,6 +8,7 @@ import {
   real,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import type {
@@ -21,6 +22,7 @@ import { datasets } from "./datasets";
 import {
   fineTuneJobStatusEnum,
   jobEventTypeEnum,
+  outputDestinationEnum,
   trainingPresetEnum,
   trainingProviderEnum,
 } from "./enums";
@@ -63,11 +65,15 @@ export const fineTuneJobs = pgTable(
     orchestratorRunId: text("orchestrator_run_id"),
     attempt: integer("attempt").notNull().default(0),
 
+    /** Namespace receiving the adapter: the user's HF account or the platform org. */
+    outputDestination: outputDestinationEnum("output_destination").notNull().default("user"),
     /** Where the LoRA adapter is pushed, e.g. "alice/llama-3.2-1b-support-bot". */
     outputRepoId: text("output_repo_id"),
     outputRepoPrivate: boolean("output_repo_private").notNull().default(false),
 
     error: text("error"),
+    /** Last event received from the trainer: drives the "worker went silent" watchdog. */
+    lastEventAt: timestamp("last_event_at", { withTimezone: true }),
     startedAt: timestamp("started_at", { withTimezone: true }),
     finishedAt: timestamp("finished_at", { withTimezone: true }),
     createdAt: createdAt(),
@@ -89,11 +95,17 @@ export const fineTuneJobEvents = pgTable(
       .notNull()
       .references(() => fineTuneJobs.id, { onDelete: "cascade" }),
     type: jobEventTypeEnum("type").notNull(),
+    /** Trainer sequence number (null for events emitted by the app itself). */
+    seq: integer("seq"),
     message: text("message"),
     data: jsonb("data").$type<Record<string, unknown>>(),
     createdAt: createdAt(),
   },
-  (table) => [index("fine_tune_job_events_job_id_id_idx").on(table.jobId, table.id)],
+  (table) => [
+    index("fine_tune_job_events_job_id_id_idx").on(table.jobId, table.id),
+    // Retried deliveries of the same trainer event are ignored.
+    uniqueIndex("fine_tune_job_events_job_id_seq_idx").on(table.jobId, table.seq),
+  ],
 );
 
 export type FineTuneJob = typeof fineTuneJobs.$inferSelect;
