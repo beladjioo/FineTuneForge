@@ -1,5 +1,5 @@
 import "server-only";
-import { count, eq, gte, type SQL, sql } from "drizzle-orm";
+import { and, count, eq, gte, notInArray, type SQL, sql } from "drizzle-orm";
 import { listDatasets } from "@/features/datasets/server/queries";
 import { getHuggingFaceConnection } from "@/features/huggingface/server/credentials";
 import { startOfCurrentMonthUtc } from "@/lib/dates";
@@ -27,7 +27,14 @@ export async function getDashboardData(userId: string) {
       db
         .select({
           total: count(),
-          thisMonth: countWhere(gte(fineTuneJobs.createdAt, startOfCurrentMonthUtc())),
+          // Same rule as the quota: failed and cancelled runs are not billed.
+          thisMonth: countWhere(
+            and(
+              gte(fineTuneJobs.createdAt, startOfCurrentMonthUtc()),
+              notInArray(fineTuneJobs.status, ["failed", "cancelled"]),
+            ),
+          ),
+          succeeded: countWhere(eq(fineTuneJobs.status, "succeeded")),
         })
         .from(fineTuneJobs)
         .where(eq(fineTuneJobs.userId, userId)),
@@ -38,7 +45,11 @@ export async function getDashboardData(userId: string) {
 
   return {
     datasets: { total: datasetCounts[0]?.total ?? 0, ready: datasetCounts[0]?.ready ?? 0 },
-    fineTunes: { total: jobCounts[0]?.total ?? 0, thisMonth: jobCounts[0]?.thisMonth ?? 0 },
+    fineTunes: {
+      total: jobCounts[0]?.total ?? 0,
+      thisMonth: jobCounts[0]?.thisMonth ?? 0,
+      succeeded: jobCounts[0]?.succeeded ?? 0,
+    },
     deployments: { total: deploymentCounts[0]?.total ?? 0 },
     hfConnection,
     recentDatasets,

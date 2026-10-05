@@ -7,7 +7,7 @@ import { type NextRequest, NextResponse } from "next/server";
  * session validation happens server-side in the (app) layout and in every action.
  */
 
-const PROTECTED_PREFIXES = ["/dashboard", "/datasets", "/settings"];
+const PROTECTED_PREFIXES = ["/dashboard", "/datasets", "/fine-tunes", "/settings"];
 
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;

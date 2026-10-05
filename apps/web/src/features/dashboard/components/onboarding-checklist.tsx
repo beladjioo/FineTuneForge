@@ -17,9 +17,11 @@ interface Step {
 export function OnboardingChecklist({
   hfConnected,
   hasReadyDataset,
+  hasSucceededJob,
 }: {
   hfConnected: boolean;
   hasReadyDataset: boolean;
+  hasSucceededJob: boolean;
 }) {
   const steps: Step[] = [
     {
@@ -37,8 +39,8 @@ export function OnboardingChecklist({
     {
       title: "Lancer un fine-tuning",
       description: "Choisissez un modèle (Llama, Qwen, Gemma…) et un preset LoRA.",
-      done: false,
-      action: null,
+      done: hasSucceededJob,
+      action: { label: "Lancer", href: "/fine-tunes/new" },
     },
     {
       title: "Évaluer et déployer",

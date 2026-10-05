@@ -11,7 +11,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { label: "Tableau de bord", icon: LayoutDashboard, href: "/dashboard" },
   { label: "Datasets", icon: Database, href: "/datasets" },
-  { label: "Fine-tunes", icon: Cpu, href: null },
+  { label: "Fine-tunes", icon: Cpu, href: "/fine-tunes" },
   { label: "Modèles", icon: Rocket, href: null },
   { label: "Paramètres", icon: Settings, href: "/settings" },
 ];

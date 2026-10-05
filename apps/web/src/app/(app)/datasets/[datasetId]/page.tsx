@@ -132,12 +132,17 @@ export default async function DatasetPage(props: PageProps<"/datasets/[datasetId
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button disabled className="w-full">
-              <Cpu /> Lancer un fine-tuning
-            </Button>
-            <p className="mt-2 text-center text-muted-foreground text-xs">
-              Disponible prochainement
-            </p>
+            {dataset.status === "ready" ? (
+              <Button asChild className="w-full">
+                <Link href={{ pathname: "/fine-tunes/new", query: { datasetId: dataset.id } }}>
+                  <Cpu /> Lancer un fine-tuning
+                </Link>
+              </Button>
+            ) : (
+              <Button disabled className="w-full">
+                <Cpu /> Lancer un fine-tuning
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>

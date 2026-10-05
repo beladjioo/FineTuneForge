@@ -67,6 +67,7 @@ export default async function DashboardPage() {
         <OnboardingChecklist
           hfConnected={data.hfConnection !== null}
           hasReadyDataset={data.datasets.ready > 0}
+          hasSucceededJob={data.fineTunes.succeeded > 0}
         />
 
         <Card>
